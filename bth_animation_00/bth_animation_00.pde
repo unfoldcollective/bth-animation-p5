@@ -20,17 +20,17 @@ boolean[] lightsArray = {
 };
 int NO_LIGHTS = lightsArray.length;
 
-int waveWidths[] = {1, 2, 4, 0};
-int durations[] = {8000, 6000, 4000, 2000};
+int waveWidths[] = {   0,     1,    0,    1,    0,    3,    5,    1,    3,    5,    3,   12,     2,     1,    0};
+int durations[]  = {6000, 24000, 2000, 4000, 2000, 7000, 7000, 4000, 5000, 5000, 7000, 4000, 10000, 12000, 5000};
 int NO_ANIMATIONS = waveWidths.length;
 
-int waveWidth = 1;
-int duration = 4200;
-int lightIndex = -1;
+int waveWidth;
+int duration;
+int lightIndex = 0;
 int sequenceIndex = 0;
 
 int time;
-int interval = duration / NO_LIGHTS;
+int interval;
 
 boolean animPlaying = false;
 
@@ -48,6 +48,8 @@ void setup() {
   mouseY = height / 2;
   
   ellipseMode(CENTER);
+  
+  set_anim_state_from_sequence();
 }
 
 void draw() {
@@ -116,9 +118,8 @@ boolean[] anim_wave() {
     }
     
     // turn off
-    if (waveWidth < NO_LIGHTS) {
-      int toTurnOff = onFrom - 1;
-      toTurnOff = wrapAround(toTurnOff, NO_LIGHTS);
+    int toTurnOff = onFrom - 1;
+    if(toTurnOff >= 0 && toTurnOff < NO_LIGHTS) {
       print("off: ");
       println(toTurnOff);
       lightsArray[toTurnOff] = false;
@@ -130,7 +131,7 @@ boolean[] anim_wave() {
   
   // increment lightIndex
   lightIndex++;
-  if(lightIndex == NO_LIGHTS + waveWidth && sequenceIndex < NO_ANIMATIONS - 1) { // on end
+  if(lightIndex == NO_LIGHTS + waveWidth) { // on end
     next_anim();
     lightIndex = 0;
   }
@@ -140,6 +141,7 @@ boolean[] anim_wave() {
 
 void next_anim(){
   sequenceIndex++;
+  sequenceIndex = wrapAround(sequenceIndex, NO_ANIMATIONS);
   set_anim_state_from_sequence();
 }
 
@@ -154,7 +156,7 @@ void toggleAnim() {
 
 void resetAnim() {
   allOff();
-  lightIndex = -1;
+  lightIndex = 0;
   sequenceIndex = 0;
 }
 
